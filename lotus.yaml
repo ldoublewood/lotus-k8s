@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lotus01-pvc
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 6Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: paramcache-pvc
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lotus01
+spec:
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: lotus01-pvc
+  - name: paramcache
+    persistentVolumeClaim:
+      claimName: paramcache-pvc
+  containers:
+  - name: lotus01
+    image: harbor.filcloud.io:2443/filcloud/lotus:latest
+    imagePullPolicy: Always
+    command: ["./lotus"]
+    args: ["daemon"]
+    env:
+      - name: LOTUS_STORAGE_PATH
+        value: /data/lotusstorage
+      - name: LOTUS_PATH
+        value: /data/lotus
+      - name: FULLNODE_LISTEN_ADDR
+        value: /ip4/0.0.0.0/tcp/1234/http
+    volumeMounts:
+    - name: data
+      mountPath: /data/
+    - name: paramcache
+      mountPath: /var/tmp/filecoin-proof-parameters
