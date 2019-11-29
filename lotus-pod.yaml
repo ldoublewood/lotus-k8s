@@ -1,23 +1,23 @@
-#apiVersion: v1
-#kind: PersistentVolumeClaim
-#metadata:
-#  name: lotusboot-pvc
-#spec:
-#  accessModes: ["ReadWriteOnce"]
-#  resources:
-#    requests:
-#      storage: 6Gi
-#---
-#apiVersion: v1
-#kind: PersistentVolumeClaim
-#metadata:
-#  name: paramcache-pvc
-#spec:
-#  accessModes: ["ReadWriteOnce"]
-#  resources:
-#    requests:
-#      storage: 20Gi
-#---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lotusboot-pvc
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 6Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: paramcache-pvc
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 20Gi
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -30,22 +30,22 @@ spec:
     value: boot
   volumes:
   - name: data
-#    persistentVolumeClaim:
-#      claimName: lotusboot-pvc
-    hostPath:
-      path: /databoot
+    persistentVolumeClaim:
+      claimName: lotusboot-pvc
+#    hostPath:
+#      path: /databoot
   - name: paramcache
-#    persistentVolumeClaim:
-#      claimName: paramcache-pvc
-    hostPath:
-      path: /paramcache
+    persistentVolumeClaim:
+      claimName: paramcache-pvc
+#    hostPath:
+#      path: /paramcache
   containers:
   - name: lotusboot
     image: harbor.filcloud.io:2443/filcloud/lotus-private-boot:latest
     imagePullPolicy: Always
-    #command: ["bash -c 'if [ ! -d "/data/lotus" ]; then cp -r /root/.lotus /data/lotus; fi && ./lotus daemon --bootstrap=false"]
-    command: ["./lotus"]
-    #args: ["daemon"]
+    command: ["bash"]
+    #command: ["./lotus"]
+    args: ["-c","if [ ! -d \"/data/lotus\" ]; then cp -r /root/.lotus /data/lotus; fi && ./lotus daemon --bootstrap=false"]
     env:
       - name: LOTUS_STORAGE_PATH
         value: /data/lotusstorage
@@ -63,8 +63,8 @@ spec:
   - name: lotusboot-storage-miner
     image: harbor.filcloud.io:2443/filcloud/lotus-private:latest
     imagePullPolicy: Always
-    command: [./lotus-storage-miner run]
-#    args: ["daemon"]
+    command: [./lotus-storage-miner]
+    args: ["run"]
     env:
       - name: LOTUS_STORAGE_PATH
         value: /data/lotusstorage
@@ -75,7 +75,7 @@ spec:
       - name: FULLNODE_API
         value: /dns4/lotusboot/tcp/1234/http
       - name: FULLNODE_TOKEN
-        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.FTCrFuANxnafCaLLefICZ7hZ0CjZz40hgyQj90QIfdo
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.ijPwSQ73R6w2RikQQai0U5_QpY4XmnJXoQGjVo2ULos
       - name: IPFS_GATEWAY
         value: http://10.98.244.47:8080/ipfs/
     volumeMounts:
