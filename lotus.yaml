@@ -43,6 +43,8 @@ spec:
         value: /data/lotus
       - name: FULLNODE_LISTEN_ADDR
         value: /ip4/0.0.0.0/tcp/1234/http
+      - name: IPFS_GATEWAY
+        value: http://10.98.244.47:8080/ipfs/
     volumeMounts:
     - name: data
       mountPath: /data/
