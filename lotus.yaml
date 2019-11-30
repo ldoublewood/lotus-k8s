@@ -12,9 +12,6 @@ spec:
       labels:
         app: lotus
     spec:
-#      tolerations:
-#      - effect: NoSchedule
-#        operator: Exists
       volumes:
       - name: data
         hostPath:
@@ -43,8 +40,7 @@ spec:
       - name: lotus-storage-miner
         image: harbor.filcloud.io:2443/filcloud/lotus-private:latest
         imagePullPolicy: Always
-        command: ["./lotus-storage-miner run"]
-        args: ["daemon"]
+        command: ["bash","-c", "curl --connect-timeout 3 --max-time 5 --retry 10 --retry-delay 5 --retry-max-time 60 lotusboot:1234 && ./lotus-storage-miner run"]
         env:
           - name: LOTUS_STORAGE_PATH
             value: /data/lotusstorage
