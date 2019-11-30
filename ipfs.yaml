@@ -34,7 +34,7 @@ spec:
       claimName: ipfs-export-pvc
   containers:
   - name: ipfs
-    image: ipfs/go-ipfs:latest
+    image: harbor.filcloud.io:2443/filcloud/go-ipfs:latest
     imagePullPolicy: Always
     ports:
       - name: http-server
@@ -44,12 +44,8 @@ spec:
       - name: swarm
         containerPort: 4001
     env:
-      - name: LOTUS_STORAGE_PATH
-        value: /data/lotusstorage
-      - name: LOTUS_PATH
-        value: /data/lotus
-      - name: FULLNODE_LISTEN_ADDR
-        value: /ip4/0.0.0.0/tcp/1234/http
+      - name: IPFS_CORS_ORIGIN
+        value: http://192.168.0.231:5001
     volumeMounts:
     - name: ipfs-data
       mountPath: /data/

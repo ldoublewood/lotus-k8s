@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: lotusboot-pvc
+  name: lotusboot-data-pvc
 spec:
   accessModes: ["ReadWriteOnce"]
   resources:
@@ -11,7 +11,17 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: paramcache-pvc
+  name: lotusboot-storage-paramcache-pvc
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lotusboot-node-paramcache-pvc
 spec:
   accessModes: ["ReadWriteOnce"]
   resources:
@@ -31,14 +41,13 @@ spec:
   volumes:
   - name: data
     persistentVolumeClaim:
-      claimName: lotusboot-pvc
-#    hostPath:
-#      path: /databoot
-  - name: paramcache
+      claimName: lotusboot-data-pvc
+  - name: node-paramcache
     persistentVolumeClaim:
-      claimName: paramcache-pvc
-#    hostPath:
-#      path: /paramcache
+      claimName: lotusboot-node-paramcache-pvc
+  - name: storage-paramcache
+    persistentVolumeClaim:
+      claimName: lotusboot-storage-paramcache-pvc
   containers:
   - name: lotusboot
     image: harbor.filcloud.io:2443/filcloud/lotus-private-boot:latest
@@ -58,13 +67,13 @@ spec:
     volumeMounts:
     - name: data
       mountPath: /data/
-    - name: paramcache
+    - name: node-paramcache
       mountPath: /var/tmp/filecoin-proof-parameters
   - name: lotusboot-storage-miner
     image: harbor.filcloud.io:2443/filcloud/lotus-private:latest
     imagePullPolicy: Always
-    command: [./lotus-storage-miner]
-    args: ["run"]
+    command: ["bash"]
+    args: ["-c","if [ ! -d "/data/lotusstorage" ]; then ./lotus-storage-miner init --actor=t0101 --genesis-miner; fi && ./lotus-storage-miner run"]
     env:
       - name: LOTUS_STORAGE_PATH
         value: /data/lotusstorage
@@ -81,5 +90,5 @@ spec:
     volumeMounts:
     - name: data
       mountPath: /data/
-    - name: paramcache
+    - name: storage-paramcache
       mountPath: /var/tmp/filecoin-proof-parameters
