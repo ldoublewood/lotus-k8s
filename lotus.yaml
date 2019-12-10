@@ -40,7 +40,7 @@ spec:
       - name: lotus-storage-miner
         image: harbor.filcloud.io:2443/filcloud/lotus-private:latest
         imagePullPolicy: Always
-        command: ["bash","-c", "if [ ! -d \"/data/lotusstorage\" ]; then for (( i=1; i < 100; i ++ )) do if [ ! \"$(./lotus wallet balance)\" = \"0\" ]; then echo \"storage miner initializing\" && ./lotus-storage-miner init --owner=$(./lotus wallet list); break; fi; echo \"not enough balance\"; sleep 5; done; fi && echo \"storage miner running\" && ./lotus-storage-miner run || echo \"run miner fail, pls fix it\" && sleep 20000 "]
+        command: ["bash","-c", "while true do if [ -d \"/data/lotusstorage\" ]; then break fi; echo \"waiting for storage miner initialization\" && sleep 5; done; && echo \"sleep more 30 second before storage miner running\" && sleep 30 && ./lotus-storage-miner run"]
         env:
           - name: LOTUS_PATH
             value: /data/lotus	
@@ -53,6 +53,22 @@ spec:
 #            value: /dns4/lotus/tcp/1234/http
 #          - name: FULLNODE_TOKEN
 #            value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.FTCrFuANxnafCaLLefICZ7hZ0CjZz40hgyQj90QIfdo
+          - name: IPFS_GATEWAY
+            value: http://10.98.244.47:8080/ipfs/
+        volumeMounts:
+        - name: data
+          mountPath: /data/
+        - name: paramcache
+          mountPath: /var/tmp/filecoin-proof-parameters
+      - name: lotus-helper
+        image: harbor.filcloud.io:2443/filcloud/lotus:latest
+        imagePullPolicy: Always
+        command: ["bash","-c", "if [ ! -d \"/data/lotusstorage\" ]; then ./lotus-helper; fi"]
+        env:
+          - name: LOTUS_PATH
+            value: /data/lotus
+          - name: LOTUS_STORAGE_PATH
+            value: /data/lotusstorage
           - name: IPFS_GATEWAY
             value: http://10.98.244.47:8080/ipfs/
         volumeMounts:
