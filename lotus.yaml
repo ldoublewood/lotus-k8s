@@ -21,7 +21,7 @@ spec:
           path: /paramcache
       containers:
       - name: lotus
-        image: harbor.filcloud.io:2443/filcloud/lotus-private:latest
+        image: harbor.filcloud.io:2443/filcloud/lotus:latest
         imagePullPolicy: Always
         command: ["./lotus"]
         args: ["daemon"]
@@ -38,7 +38,7 @@ spec:
           - name: paramcache
             mountPath: /var/tmp/filecoin-proof-parameters
       - name: lotus-storage-miner
-        image: harbor.filcloud.io:2443/filcloud/lotus-private:latest
+        image: harbor.filcloud.io:2443/filcloud/lotus:latest
         imagePullPolicy: Always
         command: ["bash","-c", "while true do if [ -d \"/data/lotusstorage\" ]; then break fi; echo \"waiting for storage miner initialization\" && sleep 5; done; && echo \"sleep more 30 second before storage miner running\" && sleep 30 && ./lotus-storage-miner run"]
         env:
