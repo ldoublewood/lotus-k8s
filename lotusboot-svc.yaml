@@ -5,6 +5,7 @@ metadata:
   labels:
     run: lotusboot
 spec:
+  type: LoadBalancer
   ports:
   - name: rpc
     port: 1234
