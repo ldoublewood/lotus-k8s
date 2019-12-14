@@ -32,6 +32,8 @@ spec:
             value: /ip4/0.0.0.0/tcp/1234/http
           - name: IPFS_GATEWAY
             value: http://10.98.244.47:8080/ipfs/
+          - name: PROXY_FETCHER_ADDR
+            value: ${PROXYLOCK_SERVICE_HOST}
         volumeMounts:
           - name: data
             mountPath: /data/
@@ -63,7 +65,7 @@ spec:
       - name: lotus-helper
         image: harbor.filcloud.io:2443/filcloud/lotus:latest
         imagePullPolicy: Always
-        command: ["bash","-c", "echo \"waiting 60 seconds\" && sleep 60 && if [ ! -d \"/data/lotusstorage\" ]; then ./lotus sync status && echo \"waiting for sync ...\"./lotus sync wait && echo \"running lotus-helper\" && ./lotus-helper run; fi"]
+        command: ["bash","-c", "echo \"waiting 300 seconds\" && sleep 300 && if [ ! -d \"/data/lotusstorage\" ]; then ./lotus sync status && echo \"waiting for sync ...\" && ./lotus sync wait && echo \"running lotus-helper\" && ./lotus-helper run; fi"]
         env:
           - name: LOTUS_PATH
             value: /data/lotus
