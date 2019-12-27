@@ -30,10 +30,8 @@ spec:
             value: /data/lotus
           - name: FULLNODE_LISTEN_ADDR
             value: /ip4/0.0.0.0/tcp/1234/http
-          - name: IPFS_GATEWAY
-            value: http://10.98.244.47:8080/ipfs/
           - name: PROXY_FETCHER_ADDR
-            value: ${PROXYLOCK_SERVICE_HOST}
+            value: ""
         volumeMounts:
           - name: data
             mountPath: /data/
@@ -50,13 +48,6 @@ spec:
             value: /data/lotusstorage
           - name: FULLNODE_LISTEN_ADDR
             value: /ip4/0.0.0.0/tcp/1234/http
-# masked because of local repo mode instead of remote mode is used 
-#          - name: FULLNODE_API
-#            value: /dns4/lotus/tcp/1234/http
-#          - name: FULLNODE_TOKEN
-#            value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.FTCrFuANxnafCaLLefICZ7hZ0CjZz40hgyQj90QIfdo
-          - name: IPFS_GATEWAY
-            value: http://10.98.244.47:8080/ipfs/
         volumeMounts:
         - name: data
           mountPath: /data/
@@ -71,8 +62,6 @@ spec:
             value: /data/lotus
           - name: LOTUS_STORAGE_PATH
             value: /data/lotusstorage
-          - name: IPFS_GATEWAY
-            value: http://10.98.244.47:8080/ipfs/
         volumeMounts:
         - name: data
           mountPath: /data/
