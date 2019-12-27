@@ -18,12 +18,12 @@ spec:
           path: /data
       - name: paramcache
         hostPath:
-          path: /paramcache
+          path: /var/tmp/filecoin-proof-parameters
       containers:
       - name: lotus
         image: harbor.filcloud.io:2443/filcloud/lotus:latest
         imagePullPolicy: Always
-        command: ["./lotus"]
+        command: ["lotus"]
         args: ["daemon"]
         env:
           - name: LOTUS_PATH
@@ -42,7 +42,7 @@ spec:
       - name: lotus-storage-miner
         image: harbor.filcloud.io:2443/filcloud/lotus:latest
         imagePullPolicy: Always
-        command: ["bash","-c", "echo \"waiting 300 seconds\" && sleep 300 && while true; do if [ -d \"/data/lotusstorage\" ]; then break; fi; echo \"waiting for storage miner initialization\" && sleep 5; done && echo \"sleep more 30 second before storage miner running\" && sleep 30 && ./lotus-storage-miner run"]
+        command: ["sh","-c", "echo \"waiting 300 seconds\" && sleep 300 && while true; do if [ -d \"/data/lotusstorage\" ]; then break; fi; echo \"waiting for storage miner initialization\" && sleep 5; done && echo \"sleep more 30 second before storage miner running\" && sleep 30 && lotus-storage-miner run"]
         env:
           - name: LOTUS_PATH
             value: /data/lotus
@@ -65,7 +65,7 @@ spec:
       - name: lotus-helper
         image: harbor.filcloud.io:2443/filcloud/lotus:latest
         imagePullPolicy: Always
-        command: ["bash","-c", "echo \"waiting 300 seconds\" && sleep 300 && if [ ! -d \"/data/lotusstorage\" ]; then ./lotus sync status && echo \"waiting for sync ...\" && ./lotus sync wait && echo \"running lotus-helper\" && ./lotus-helper run; fi"]
+        command: ["sh","-c", "echo \"waiting 300 seconds\" && sleep 300 && if [ ! -d \"/data/lotusstorage\" ]; then lotus sync status && echo \"waiting for sync ...\" && lotus sync wait && echo \"running lotus-helper\" && lotus-helper run; fi"]
         env:
           - name: LOTUS_PATH
             value: /data/lotus
